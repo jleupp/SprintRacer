@@ -1,0 +1,197 @@
+/***************************************
+GENERAL
+****************************************/
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	background-color: #E6E9E7;
+}
+
+#container {
+	background-color: #E7E8EB;
+}
+
+#container > h1 {
+	text-align: center;
+	color: #77B584;
+
+}
+
+
+
+/***************************************
+HEADING
+****************************************/
+header#leftHeader {
+	background-color: #9298AB;
+	font-weight: bold;
+	text-transform: capitalize;
+	font-size: 12px;
+	letter-spacing: .15em;
+	color: #E7E8EB;
+	text-align: center;
+	height: 50px;
+	line-height: 2;
+}
+h1.sectionheader {
+	text-align: inherit;
+	color: #2D3B55;
+	font-size: 29px;
+	font-weight: 300;
+	letter-spacing: 0.2em;
+	padding-top: 2.5%;
+}
+
+.subHeader > h2 {
+	color: #2D3B55;
+	font-weight: bold;
+	font-size: 12px;	
+}
+
+
+
+/***************************************
+Log In Page
+****************************************/
+div#loginboxOutter {
+	vertical-align: middle;
+	margin-top: 0%;
+	margin-left: 20%;
+	margin-right: 20%;
+	background-color: #FFFFFF;
+	height: 400px;
+}
+
+div#loginboxInner {
+	vertical-align: middle;
+	margin-left: 20%;
+	margin-right: 20%;
+	margin-top: 20%;
+	margin-bottom: 20%;
+
+}
+
+
+
+/***************************************
+Hothome
+****************************************/
+div#hothomeOuter {
+	vertical-align: middle;
+	margin-top: 9%;
+	margin-left: 10%;
+	margin-right: 10%;
+	width: 80%;
+	background-color: #FFFFFF;
+	border: 1px;
+	border-color: #D7DADF;
+}
+
+div.hothomeInner {
+	vertical-align: middle;
+	margin-top: 9%;
+	margin-left: 10%;
+	margin-right: 10%;
+	width: 80%;
+}
+
+
+
+/***************************************
+Submit Buttons
+****************************************/
+
+input.submit {
+	font-weight: bold;
+	font-size: 10px;
+	letter-spacing: 0.15em;
+	color: #FFFFFF;
+	background-color: #6cb1e0;
+	text-transform: uppercase;
+	width: 150px;
+	height: 40px;
+}
+
+
+/***************************************
+Form Fields
+****************************************/
+
+input.textBox {
+	color: #2D3B55;
+	background-color: #F8F8F9;
+	font-weight: 300;
+	font-size: 17px;
+	padding: 12px 0 12px;
+	margin-bottom: 12px;
+	margin-top: 12px;
+}
+
+textarea.textArea {
+	background-color: #F8F8F9;
+	border-color: #EEEFF0;
+	border: 1px;
+	font-weight: 300;
+	color: #2D3B55;
+	width: 100%;
+	height: 80px;
+}
+
+
+
+/***************************************
+TABLE
+****************************************/
+
+table#tableList {
+	font-size: 12px;
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 100%;
+}
+
+#tableList td,
+#tableList th {
+	border: 1px solid #ddd;
+	text-align: left;
+	padding: 6px;
+	white-space: nowrap;
+}
+
+#tableList tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+#tableList th {
+	padding-top: 7px;
+	padding-bottom: 7px;
+	background-color: #6cb1e0;
+	color: #FFFFFF;
+}
+
+#tableList tr:hover {
+	background-color: #d5e9f6;
+}
+
+
+
+
+/***************************************
+Return Set
+****************************************/
+
+#queryResultsOuter {
+	position: center;
+	width: 80%;
+	margin-left: 10%;
+	margin-right: 10%;
+	background-color: #E7E8EB;
+}
+
+#queryResultsInner {
+	background-color: #E7E8EB;
+	width: auto;	
+}
+
+
+
