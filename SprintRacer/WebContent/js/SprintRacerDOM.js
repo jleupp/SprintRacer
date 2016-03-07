@@ -358,7 +358,7 @@ var myTrackArea = {
 		console.log(myHighScore);
 		console.log('MY HIGH SCORE ' + myHighScore.score);
 		var scorearr = [];
-		xhrMethod('GET',"http://localhost:8080/SprintRacer/rest/highscores");
+		xhrMethod('GET',"http://52.89.185.185:8080/SprintRacer/rest/highscores");
 		canvas.parentNode.removeChild(canvas);
 	},
 };
@@ -378,7 +378,7 @@ var displayHighScores = function(scores) {
 					flag = false;
 					var enteredInitials = prompt('Enter 3 Initials for your High Score');
 					myHighScore.initials = enteredInitials;
-					xhrMethod('POST', "http://localhost:8080/SprintRacer/rest/persistscore", myHighScore);
+					xhrMethod('POST', "http://52.89.185.185:8080/SprintRacer/rest/persistscore", myHighScore);
 				}
 			}
 			var score = document.createElement('h2');
