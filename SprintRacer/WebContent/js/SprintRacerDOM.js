@@ -16,7 +16,7 @@ function init() {
 function startGame() {
 	myTrackArea.start();
 	drawMap();
-	myRaceCar = new component(30, 15, 'red', 400, 530);
+	myRaceCar = new component(30, 15, 'red', 400, 45);
 	directionalButtons();
 
 }
@@ -87,24 +87,24 @@ var directionalButtons = function() {
 	var br1 = document.createElement('br');
 	var br2 = document.createElement('br');
 	document.body.appendChild(br);
-	var up = createButton('UP');
-	document.body.appendChild(up);
-	up.addEventListener("mousedown", moveUp);
-	up.addEventListener("mouseup", stopMoving);
-	document.body.appendChild(br1);
-	var left = createButton('LEFT');
-	left.addEventListener("mousedown", moveLeft);
-	left.addEventListener("mouseup", stopMoving);
-	document.body.appendChild(left);
-	var right = createButton('RIGHT');
-	right.addEventListener("mousedown", moveRight);
-	right.addEventListener("mouseup", stopMoving);
-	document.body.appendChild(right);
-	document.body.appendChild(br2);
-	var down = createButton('DOWN');
-	down.addEventListener('mousedown', moveDown);
-	down.addEventListener('mouseup', stopMoving);
-	document.body.appendChild(down);
+	// var up = createButton('UP');
+	// document.body.appendChild(up);
+	// up.addEventListener("mousedown", moveUp);
+	// up.addEventListener("mouseup", stopMoving);
+	// document.body.appendChild(br1);
+	// var left = createButton('LEFT');
+	// left.addEventListener("mousedown", moveLeft);
+	// left.addEventListener("mouseup", stopMoving);
+	// document.body.appendChild(left);
+	// var right = createButton('RIGHT');
+	// right.addEventListener("mousedown", moveRight);
+	// right.addEventListener("mouseup", stopMoving);
+	// document.body.appendChild(right);
+	// document.body.appendChild(br2);
+	// var down = createButton('DOWN');
+	// down.addEventListener('mousedown', moveDown);
+	// down.addEventListener('mouseup', stopMoving);
+	// document.body.appendChild(down);
 };
 
 var stopMoving = function() {
@@ -157,16 +157,23 @@ var updateTrackArea = function() {
 	// }
 	drawMap();
 	myRaceCar.newPosition();
+	myRaceCar.checkCollision();
+	// console.log(myRaceCar.collision);
+	if (myRaceCar.collision) {
+		myTrackArea.gameOver();
+	}
 	myRaceCar.update();
 };
 
 var component = function(width, height, color, x, y) {
 	this.width = width;
 	this.height = height;
+	this.speed = 0;
 	this.x = x;
 	this.y = y;
 	this.deltaX = 0;
 	this.deltaY = 0;
+	this.collision = true;
 	this.newPosition = function () {
 		this.x += this.deltaX;
 		this.y += this.deltaY;
@@ -175,6 +182,9 @@ var component = function(width, height, color, x, y) {
 		cx = myTrackArea.context;
 		cx.fillStyle = color;
 		cx.fillRect(this.x, this.y, this.width, this.height);
+	};
+	this.checkCollision = function() {
+		this.collision = collisionChecker(this.x, this.y);
 	};
 };
 
@@ -196,9 +206,33 @@ var myTrackArea = {
 	},
 	clear : function() {
 		this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
-	}
+	},
+	gameOver : function() {
+		clearInterval(this.interval);
+		var canvas = document.querySelector('canvas');
+		var gameMessage = document.createElement('h1');
+		gameMessage.setAttribute('class', 'sectionheader');
+		gameMessage.innerHTML = 'GAME OVAH!';
+		document.body.insertBefore(gameMessage, canvas);
+		canvas.parentNode.removeChild(canvas);
+
+	},
 };
 
+var collisionChecker = function(xPos, yPos) {
+	var cxColl = document.querySelector('canvas').getContext('2d');
+	if (cxColl.isPointInPath(path2, xPos, yPos)) {
+		// console.log('INSIDE INNERMAP');
+		return true;
+	} 
+	else if (cxColl.isPointInPath(path3, xPos, yPos) && !cxColl.isPointInPath(path1, xPos, yPos)) {
+		// console.log('INSIDE INNERMAP');
+		return true;
+	}
+	else {
+		return false;
+	}
+};
 
 
 
