@@ -16,8 +16,10 @@ function init() {
 function startGame() {
 	myTrackArea.start();
 	drawMap();
-	myRaceCar = new component(15, 30, 'red', 700, 400);
-	directionalButtons();
+	myRaceCar = new component(15, 30, 'red', 700, 385);
+	
+	
+	// directionalButtons();
 
 }
 var outterMap = function() {
@@ -76,10 +78,23 @@ var outterMostMap = function () {
 	cx2.fillStyle = 'green';
 	cx2.fill(path3);
 };
+
+var finishLine = function() {
+	var cx3 = document.querySelector('canvas').getContext('2d');
+	path4 = new Path2D();
+	path4.moveTo(781, 416);
+	path4.lineTo(640,416);
+	path4.lineTo(640, 401);
+	path4.lineTo(781, 401);
+	path4.closePath();
+	cx3.fillStyle = 'white';
+	cx3.fill(path4);
+}
 var drawMap = function() {
 	outterMostMap();
 	outterMap();
 	innerMap();
+	finishLine();
 };
 
 var directionalButtons = function() {
@@ -163,6 +178,16 @@ var updateTrackArea = function() {
 	if (myRaceCar.collision) {
 		myTrackArea.gameOver();
 	}
+	if (!myRaceCar.lap) {
+		if(myRaceCar.checkLap()) {
+			myRaceCar.numLap += 1;
+		}
+	} else if(myRaceCar.lap) {
+		if(!myRaceCar.checkLap()) {
+			myRaceCar.lap = false;
+		}
+	}
+	// myRaceCar.checkLap();
 	myRaceCar.update();
 };
 
@@ -175,6 +200,9 @@ var component = function(width, height, color, x, y) {
 	this.x = x;
 	this.y = y;
 	this.collision = false;
+	this.lap = false;
+	this.numLap = 0;
+
 	this.corner1 = function() {
 		var tempx = -3.5;
 		var tempy = 15;
@@ -205,15 +233,24 @@ var component = function(width, height, color, x, y) {
 		var corner1Col = collisionChecker(corner1X, corner1Y);
 		return corner1Col;
 	};
-	this.corner4 = function() {
+	this.corner4 = function(lap) {
+
 		var tempx = -3.5;
 		var tempy = -15;
 		var roatx = (tempx * Math.cos(this.angle)) - (tempy * Math.sin(this.angle));
 		var roaty = (tempx * Math.sin(this.angle)) + (tempy * Math.cos(this.angle));
 		corner1X = roatx + this.x;
 		corner1Y = roaty + this.y;
+		if (lap) {
+			var lapCorner = lapChecker(corner1X, corner1Y);
+			// console.log('IN CORNER 4 LapCorner = ' + lapCorner);
+			return lapCorner;
+		}
+		else {	
 		var corner1Col = collisionChecker(corner1X, corner1Y);
 		return corner1Col;
+		}
+		
 	};
 	// this.deltaX = 0;
 	// this.deltaY = 0;
@@ -246,8 +283,17 @@ var component = function(width, height, color, x, y) {
 		}
 		else if (this.corner4()) {
 			this.collision = true;
+			// console.log('CORNER 4 HAS COLLISION');
 		}
 		else {
+			return false;
+		}
+	};
+	this.checkLap = function() {
+		if(this.corner4(true)) {
+			this.lap = true;
+			return true;
+		} else {
 			return false;
 		}
 	};
@@ -276,13 +322,25 @@ var myTrackArea = {
 		clearInterval(this.interval);
 		var canvas = document.querySelector('canvas');
 		var gameMessage = document.createElement('h1');
+		var lapMessage = document.createElement('h1');
 		gameMessage.setAttribute('class', 'sectionheader');
 		gameMessage.innerHTML = 'GAME OVAH!';
+		lapMessage.setAttribute('class', 'sectionheader');
+		lapMessage.innerHTML = 'You Completed ' + myRaceCar.numLap + ' Laps';
 		document.body.insertBefore(gameMessage, canvas);
+		document.body.insertBefore(lapMessage, canvas);
 		canvas.parentNode.removeChild(canvas);
 
 	},
 };
+
+var lapChecker = function(xPos, yPos) {
+	var cxLap = document.querySelector('canvas').getContext('2d');
+	if (cxLap.isPointInPath(path4, xPos, yPos)) {
+		// console.log('LAP LAP LAP');
+		return true;
+	}
+}
 
 var collisionChecker = function(xPos, yPos) {
 	var cxColl = document.querySelector('canvas').getContext('2d');
