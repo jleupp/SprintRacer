@@ -14,7 +14,7 @@
 	</head>
 	<body>
 		<div id="container">
-			<header id="leftHeader"> <!-- prev HLheader -->
+			<header id="sprintHeader"> <!-- prev HLheader -->
 				<h1>Welcome to Sprint Racer</h1> 
 			</header>
 			<div id="sectionheader"><h1 class="sectionheader"></h1></div><!--  -->

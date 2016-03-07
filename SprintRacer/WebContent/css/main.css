@@ -22,7 +22,7 @@ body {
 /***************************************
 HEADING
 ****************************************/
-header#leftHeader {
+header#sprintHeader {
 	background-color: #9298AB;
 	font-weight: bold;
 	text-transform: capitalize;
@@ -48,6 +48,17 @@ h1.sectionheader {
 	font-size: 12px;	
 }
 
+
+
+/***************************************
+Canvas
+****************************************/
+canvas {
+	border: 2px solid #d3d3d3;
+	background-color: #f1f1f1;
+	float: auto;
+
+}
 
 
 /***************************************
