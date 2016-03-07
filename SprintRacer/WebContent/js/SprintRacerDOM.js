@@ -16,7 +16,7 @@ function init() {
 function startGame() {
 	myTrackArea.start();
 	drawMap();
-	myRaceCar = new component(30, 15, 'red', 400, 45);
+	myRaceCar = new component(15, 30, 'red', 700, 400);
 	directionalButtons();
 
 }
@@ -108,24 +108,37 @@ var directionalButtons = function() {
 };
 
 var stopMoving = function() {
-	myRaceCar.deltaX = 0;
-	myRaceCar.deltaY = 0;
+	myRaceCar.moveAngle = 0;
+	if (myRaceCar.speed > 4) {
+	myRaceCar.speed = 4;
+	}
+	// myRaceCar.deltaX = 0;
+	// myRaceCar.deltaY = 0;
 };
 
 var moveUp = function() {
-	myRaceCar.deltaY = -1;
+	if(myRaceCar.speed >4) {
+		myRaceCar.speed = myRaceCar.speed;
+	}
+	else {
+	myRaceCar.speed += .01;
+	}
+	// myRaceCar.deltaY = -1;
 };
 
 function moveLeft() {
-	myRaceCar.deltaX = -1;
+	myRaceCar.moveAngle = -1;
+	// myRaceCar.deltaX = -1;
 }
 
 function moveRight() {
-	myRaceCar.deltaX = 1;
+	myRaceCar.moveAngle = 1;
+	// myRaceCar.deltaX = 1;
 }
 
 function moveDown() {
-	myRaceCar.deltaY = 1;
+	myRaceCar.speed -= .04;
+	// myRaceCar.deltaY = 1;
 }
 
 var updateTrackArea = function() {
@@ -143,18 +156,6 @@ var updateTrackArea = function() {
 	if(myTrackArea.keys && myTrackArea.keys[40]) {
 		moveDown();
 	}	
-	// if (myTrackArea.keys) {
-	// 	switch(myTrackArea.key) {
-	// 		case 38: moveUp();
-	// 		break;
-	// 		case 40: moveDown();
-	// 		break;
-	// 		case 37: moveLeft();
-	// 		break;
-	// 		case 39: moveRight();
-	// 		break;
-	// 	}
-	// }
 	drawMap();
 	myRaceCar.newPosition();
 	myRaceCar.checkCollision();
@@ -169,22 +170,86 @@ var component = function(width, height, color, x, y) {
 	this.width = width;
 	this.height = height;
 	this.speed = 0;
+	this.angle = 0;
+	this.moveAngle = 0;
 	this.x = x;
 	this.y = y;
-	this.deltaX = 0;
-	this.deltaY = 0;
-	this.collision = true;
+	this.collision = false;
+	this.corner1 = function() {
+		var tempx = -3.5;
+		var tempy = 15;
+		var roatx = (tempx * Math.cos(this.angle)) - (tempy * Math.sin(this.angle));
+		var roaty = (tempx * Math.sin(this.angle)) + (tempy * Math.cos(this.angle));
+		corner1X = roatx + this.x;
+		corner1Y = roaty + this.y;
+		var corner1Col = collisionChecker(corner1X, corner1Y);
+		return corner1Col;
+	};
+	this.corner2 = function() {
+		var tempx = 3.5;
+		var tempy = 15;
+		var roatx = (tempx * Math.cos(this.angle)) - (tempy * Math.sin(this.angle));
+		var roaty = (tempx * Math.sin(this.angle)) + (tempy * Math.cos(this.angle));
+		corner1X = roatx + this.x;
+		corner1Y = roaty + this.y;
+		var corner1Col = collisionChecker(corner1X, corner1Y);
+		return corner1Col;
+	};
+	this.corner3 = function() {
+		var tempx = 3.5;
+		var tempy = -15;
+		var roatx = (tempx * Math.cos(this.angle)) - (tempy * Math.sin(this.angle));
+		var roaty = (tempx * Math.sin(this.angle)) + (tempy * Math.cos(this.angle));
+		corner1X = roatx + this.x;
+		corner1Y = roaty + this.y;
+		var corner1Col = collisionChecker(corner1X, corner1Y);
+		return corner1Col;
+	};
+	this.corner4 = function() {
+		var tempx = -3.5;
+		var tempy = -15;
+		var roatx = (tempx * Math.cos(this.angle)) - (tempy * Math.sin(this.angle));
+		var roaty = (tempx * Math.sin(this.angle)) + (tempy * Math.cos(this.angle));
+		corner1X = roatx + this.x;
+		corner1Y = roaty + this.y;
+		var corner1Col = collisionChecker(corner1X, corner1Y);
+		return corner1Col;
+	};
+	// this.deltaX = 0;
+	// this.deltaY = 0;
 	this.newPosition = function () {
-		this.x += this.deltaX;
-		this.y += this.deltaY;
+		this.angle += this.moveAngle * Math.PI /180;
+		this.x += this.speed * Math.sin(this.angle);
+		this.y -= this.speed * Math.cos(this.angle);
 	};
 	this.update = function() {
 		cx = myTrackArea.context;
+		cx.save();
+		cx.translate(this.x, this.y);
+		cx.rotate(this.angle);
 		cx.fillStyle = color;
-		cx.fillRect(this.x, this.y, this.width, this.height);
+		cx.fillRect(this.width/-2, this.height/-2, this.width, this.height);
+		cx.restore();
 	};
 	this.checkCollision = function() {
-		this.collision = collisionChecker(this.x, this.y);
+		if (this.corner1()) {
+			this.collision = true;
+			// console.log('CORNER 1 HAS COLISSION');
+		}
+		else if (this.corner2()) {
+			this.collision = true;
+			// console.log('CORNER 2 HAS COLLISION');
+		}
+		else if (this.corner3()) {
+			this.collision = true;
+			// console.log('CORNER 3 HAS COLLISION');
+		}
+		else if (this.corner4()) {
+			this.collision = true;
+		}
+		else {
+			return false;
+		}
 	};
 };
 
