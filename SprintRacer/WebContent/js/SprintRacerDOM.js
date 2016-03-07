@@ -7,17 +7,28 @@ function init() {
 	var body = document.body;
 	startGame();
 	var br = document.createElement('br');
+	displaytime = document.createElement('h1');
+	displaytime.setAttribute('class', 'sectionheader');
+	displaytime.innerHTML = 'START';
+	displaytime.setAttribute('id', 'displaytime');
 	body.appendChild(br);
+	body.appendChild(displaytime);
 	var testbutton = createButton('TestButton');
 	body.appendChild(testbutton);
 	testbutton.addEventListener("click", test);
 }
+var myScore;
+var time = 0;
+var displaytime;
+var myHighScore;
 
 function startGame() {
 	myTrackArea.start();
+
 	drawMap();
 	myRaceCar = new component(15, 30, 'red', 700, 385);
-	
+	myScore = new  clockComponent("30px", "Consolas", "black", 600, 35, 'text');
+
 	
 	// directionalButtons();
 
@@ -156,8 +167,15 @@ function moveDown() {
 	// myRaceCar.deltaY = 1;
 }
 
+var updateTime = function() {
+	time += 1;
+	myScore.text = "Score: " + time * 1005;
+	displaytime.innerHTML = myScore.text;
+};
+
 var updateTrackArea = function() {
 	myTrackArea.clear();
+	displaytime.innerHTML = myScore.text;
 	stopMoving();
 	if(myTrackArea.keys && myTrackArea.keys[37]) {
 		moveLeft();
@@ -300,6 +318,7 @@ var component = function(width, height, color, x, y) {
 };
 
 var myTrackArea = {
+
 	canvas : document.createElement('canvas'),
 	start : function() {
 		this.canvas.width = 800;
@@ -307,6 +326,7 @@ var myTrackArea = {
 		this.context = this.canvas.getContext('2d');
 		document.body.appendChild(this.canvas);
 		this.interval = setInterval(updateTrackArea, 20);
+		this.timer = setInterval(updateTime, 500);
 		window.addEventListener('keydown', function(e) {
 			myTrackArea.keys = (myTrackArea.keys || []);
 			myTrackArea.keys[e.keyCode] = true;
@@ -320,19 +340,58 @@ var myTrackArea = {
 	},
 	gameOver : function() {
 		clearInterval(this.interval);
+		clearInterval(this.timer);
 		var canvas = document.querySelector('canvas');
 		var gameMessage = document.createElement('h1');
 		var lapMessage = document.createElement('h1');
+		var highScores = 
 		gameMessage.setAttribute('class', 'sectionheader');
 		gameMessage.innerHTML = 'GAME OVAH!';
 		lapMessage.setAttribute('class', 'sectionheader');
 		lapMessage.innerHTML = 'You Completed ' + myRaceCar.numLap + ' Laps';
 		document.body.insertBefore(gameMessage, canvas);
 		document.body.insertBefore(lapMessage, canvas);
+		console.log(myRaceCar.numLap);
+		console.log(time);
+		var endScore = myRaceCar.numLap*100000 - time*1005;
+		myHighScore = new HighScore('BBB', endScore);
+		console.log(myHighScore);
+		console.log('MY HIGH SCORE ' + myHighScore.score);
+		var scorearr = [];
+		xhrMethod('GET',"http://localhost:8080/SprintRacer/rest/highscores");
 		canvas.parentNode.removeChild(canvas);
-
 	},
 };
+
+var displayHighScores = function(scores) {
+	var flag = true;
+	console.log('IN DISPLAY HIGH SCORES!');
+	var place = document.getElementById('displaytime');
+	var scoreStatement = document.createElement('h1');
+	scoreStatement.setAttribute('class', 'sectionheader');
+	scoreStatement.innerHTML = 'High Scores';
+	document.body.insertBefore(scoreStatement, place);
+		for (var i = 0; i<scores.length; i++) {
+			if(flag) {
+				if (myHighScore.score > scores[i].score){
+					console.log('NEW HIGH SCORE!!!');
+					flag = false;
+					var enteredInitials = prompt('Enter 3 Initials for your High Score');
+					myHighScore.initials = enteredInitials;
+					xhrMethod('POST', "http://localhost:8080/SprintRacer/rest/persistscore", myHighScore);
+				}
+			}
+			var score = document.createElement('h2');
+			score.innerHTML = i + 1 + ")   " + scores[i].initials + "\t    Score: " + scores[i].score;
+			document.body.insertBefore(score, place);
+		}
+
+};
+
+function HighScore (inits, scr) {
+	this.initials = inits;
+	this.score = scr;
+}
 
 var lapChecker = function(xPos, yPos) {
 	var cxLap = document.querySelector('canvas').getContext('2d');
@@ -340,7 +399,7 @@ var lapChecker = function(xPos, yPos) {
 		// console.log('LAP LAP LAP');
 		return true;
 	}
-}
+};
 
 var collisionChecker = function(xPos, yPos) {
 	var cxColl = document.querySelector('canvas').getContext('2d');
@@ -357,45 +416,28 @@ var collisionChecker = function(xPos, yPos) {
 	}
 };
 
+function clockComponent (width, height, color, x, y, text) {
+	this.text = text;
+	this.width = width;
+	this.height = height;
+	this.x = x;
+	this.y = y;
+	clockCx = document.querySelector('canvas').getContext('2d');
+	if (this.type == 'text') {
+		clockCx.font = this.width + " " + this.height;
+		clockCx.fillStyle = color;
+		clockCx.fillText(this.text, this.x, this.y);
+	}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 var xhrMethod = function(method, url, obj) {
 
 	if (obj){
 		console.log("IN xhrMETHOD" + method + url + obj);
 		user =JSON.stringify(obj);
+		console.log(user.initials);
 	} else {
 		console.log("IN XHR***" + method + url);
 	}
@@ -408,9 +450,11 @@ var xhrMethod = function(method, url, obj) {
 	xhr.onreadystatechange = function() {
 		console.log(xhr.status);
 		if(xhr.readyState === 4) {
-		
+			var scorArr = [];
+			scorArr = JSON.parse(xhr.responseText);
+			displayHighScores(scorArr);
 			}
-		}
+		};
 	if(obj) {
 		xhr.send(user);
 	} else {

@@ -21,4 +21,13 @@ public class SprintRacerRESTDAO implements SprintRacerDAO {
 	    List<HighScore> highScores = em.createQuery(cq).getResultList();
 		return highScores;
 	}
+	
+	public void setHighScore(HighScore hs) {
+		try{
+			em.persist(hs);
+		} catch(Error e) {
+			System.out.println("CAUGHT ERROR IN PERSISTING HIGH SCORE");
+		}
+		System.out.println("PERSISTING HIGH SCORE");
+	}
 }
