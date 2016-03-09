@@ -13,9 +13,9 @@ function init() {
 	displaytime.setAttribute('id', 'displaytime');
 	body.appendChild(br);
 	body.appendChild(displaytime);
-	var testbutton = createButton('TestButton');
+	var testbutton = createButton('Restart');
 	body.appendChild(testbutton);
-	testbutton.addEventListener("click", test);
+	testbutton.addEventListener("click", restart);
 }
 var myScore;
 var time = 0;
@@ -371,19 +371,30 @@ var displayHighScores = function(scores) {
 	scoreStatement.setAttribute('class', 'sectionheader');
 	scoreStatement.innerHTML = 'High Scores';
 	document.body.insertBefore(scoreStatement, place);
-		for (var i = 0; i<scores.length; i++) {
+		for (var i = 0; i<10; i++) {
 			if(flag) {
 				if (myHighScore.score > scores[i].score){
 					console.log('NEW HIGH SCORE!!!');
 					flag = false;
-					var enteredInitials = prompt('Enter 3 Initials for your High Score');
+					var enteredInitials;
+					do {
+						console.log('inside do while');
+						enteredInitials = prompt('NEW HIGH SCORE!\nEnter Up to three initials');
+						console.log('enteredInitials length: ' + enteredInitials.length);
+					} while (!enteredInitials || enteredInitials.length >3 || enteredInitials <1);
+					var brandNewHighScore = document.createElement('h2');
+					brandNewHighScore.innerHTML = i + 1 + ")   " + enteredInitials + "\t    Score: " + myHighScore.score;
+					document.body.insertBefore(brandNewHighScore, place);
 					myHighScore.initials = enteredInitials;
 					xhrMethod('POST', "http://52.89.185.185:8080/SprintRacer/rest/persistscore", myHighScore);
+					i++;
 				}
 			}
-			var score = document.createElement('h2');
-			score.innerHTML = i + 1 + ")   " + scores[i].initials + "\t    Score: " + scores[i].score;
-			document.body.insertBefore(score, place);
+			if(i<10){				
+				var score = document.createElement('h2');
+				score.innerHTML = i + 1 + ")   " + scores[i].initials + "\t    Score: " + scores[i].score;
+				document.body.insertBefore(score, place);
+			}
 		}
 
 };
@@ -462,8 +473,9 @@ var xhrMethod = function(method, url, obj) {
 	}
 };
 
-var test = function(event) {
-	event.preventDefault();
+var restart = function(event) {
+	 event.preventDefault();
+	 location.reload();
 	console.log('TEST-BUTTON!!');
 };
 
